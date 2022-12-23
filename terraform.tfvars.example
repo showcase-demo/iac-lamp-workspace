@@ -1,0 +1,5 @@
+ibmcloud_api_key    = "******************"
+region              = "jp-tok"
+resource_group_name = "Default"
+tags                = ["terraform"]
+vpc_name            = "helloworld-vpc"
