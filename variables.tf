@@ -1,9 +1,9 @@
 /******************************************
  Provider
  *****************************************/
-variable "ibmcloud_api_key" {
-  sensitive = true
-}
+#variable "ibmcloud_api_key" {
+#  sensitive = true
+#}
 
 variable "region" {
   type        = string
