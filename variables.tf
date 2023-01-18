@@ -1,14 +1,14 @@
 /******************************************
  Provider
  *****************************************/
-#variable "ibmcloud_api_key" {
-#  sensitive = true
-#}
+# variable "ibmcloud_api_key" {
+#   sensitive = true
+# }
 
 variable "region" {
   type        = string
   default     = "jp-tok"
-  description = "Region"
+  description = "リージョン"
 }
 
 /******************************************
@@ -25,9 +25,15 @@ variable "tags" {
   description = "タグ名"
 }
 
-variable "ssh_name" {
-  type        = string
-  default     = "takamura-key"
+#variable "ssh_key_names" {
+#  type    = list(string)
+#  default = ["takamura-key", "satokota-key", "nfumie-key"]
+#  description = "sshキー名のリスト"
+#}
+
+variable "ssh_key_name" {
+  type    = string
+  default = "takamura-key"
   description = "sshキー名"
 }
 /******************************************
@@ -36,7 +42,7 @@ variable "ssh_name" {
 variable "vpc_name" {
   type        = string
   default     = "iac-vpc"
-  description = "vpc名"
+  description = "VPC名"
 }
 
 
@@ -45,7 +51,7 @@ variable "vpc_name" {
  *****************************************/
 # image names can be determined with the cli command `ibmcloud is images`
 variable "image_name" {
-  description = "OS image for VSI deployments. Only tested with Centos"
+  description = "OSイメージ名"
   default     = "ibm-centos-7-9-minimal-amd64-8"
 }
 
@@ -53,79 +59,79 @@ variable "image_name" {
 /******************************************
  Log Analysis
  *****************************************/
-variable "log_name" {
-  description = "name of log instance"
+variable "logdna_name" {
   type = string
   default = "iac-log-analysis"
+  description = "Log Analysisのインスタンス名"
 }
 
-variable "log_service_type" {
-  description = "Type of resource instance"
+variable "logdna_service_type" {
   type = string
   default = "logdna"
+  description = "サービスタイプ (Log Analysis)"
 }
 
-variable "log_plan" {
-  description = "Type of service plan."
+variable "logdna_plan" {
   type = string
   default = "7-day"
+  description = "Log Analysisのサービスプラン"
 }
 
-variable "log_default_receiver" {
-  description = "Flag to select the instance to collect platform logs"
+variable "logdna_default_receiver" {
   type = bool
   default = false
+  description = "プラットフォーム・メトリックの有効化"
 }
 
-variable "log_location" {
-  description = "Location where the resource is provisioned"
+variable "logdna_location" {
   type = string
   default = "jp-tok"
+  description = "Log Analysisのロケーション"
 }
 
-variable "log_key_name" {
-  description = "Name of the resource key associated with the instance"
+variable "logdna_key_name" {
   type = string
   default = "iac-logging-tf-instance-key"
+  description = "Log Analysisのサービスキー名"
 }
 
 
 /******************************************
  IBM Monitoring
  *****************************************/
- variable "monitoring_service_type" {
-  description = "Type of resource instance"
+variable "monitoring_service_type" {
   type = string
   default = "sysdig-monitor"
-}
-
-variable "monitoring_plan" {
-  description = "Type of service plan."
-  type = string
-  default = "graduated-tier"
-}
-
-variable "monitoring_default_receiver" {
-  description = "Flag to select the instance to collect platform metrics"
-  type = bool
-  default = false
-}
-
-variable "monitoring_location" {
-  description = "Location where the resource is provisioned"
-  type = string
-  default = "jp-tok"
+  description = "サービスタイプ (Cloud Monitoring)"
 }
 
 variable "monitoring_name" {
-  description = "Name of the resource instance"
   type = string
   default = "iac-monitoring"
+  description = "Cloud Monitoringのインスタンス名"
+}
+
+variable "monitoring_plan" {
+  type = string
+  default = "graduated-tier"
+  description = "Cloud Monitoringのサービスプラン"
+}
+
+variable "monitoring_default_receiver" {
+  type = bool
+  default = false
+  description = "プラットフォーム・メトリックの有効化"
+}
+
+variable "monitoring_location" {
+  type = string
+  default = "jp-tok"
+  description = "Cloud Monitoringのロケーション"
 }
 
 variable "monitoring_key_name" {
-  description = "Name of the resource key associated with the instance"
   type = string
   default = "iac-monitoring-tf-instance-key"
+  description = "Cloud Monitoringのサービスキー名"
 }
 

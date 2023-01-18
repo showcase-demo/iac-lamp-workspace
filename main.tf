@@ -1,7 +1,7 @@
 /******************************************
  Resource Group
  *****************************************/
-data "ibm_resource_group" "this" {
+data "ibm_resource_group" "demo" {
   name = var.resource_group_name
 }
 
@@ -11,7 +11,7 @@ data "ibm_resource_group" "this" {
  *****************************************/
 resource "ibm_is_vpc" "vpc" {
   name           = var.vpc_name
-  resource_group = data.ibm_resource_group.this.id
+  resource_group = data.ibm_resource_group.demo.id
   tags           = var.tags
 }
 
@@ -19,20 +19,20 @@ resource "ibm_is_vpc" "vpc" {
 /******************************************
  Subnet
  *****************************************/
-resource "ibm_is_vpc_address_prefix" "zone1" {
+resource "ibm_is_vpc_address_prefix" "prefix_zone1" {
   cidr = "10.0.1.0/24"
   name = format("%s-add-prefix-zone1", var.vpc_name)
   vpc  = ibm_is_vpc.vpc.id
   zone = format("%s-1", var.region) # jp-tok-1
 }
 
-resource "ibm_is_subnet" "zone1" {
+resource "ibm_is_subnet" "subnet_zone1" {
   depends_on = [
-    ibm_is_vpc_address_prefix.zone1
+    ibm_is_vpc_address_prefix.prefix_zone1
   ]
   ipv4_cidr_block = "10.0.1.0/24"
   name            = format("%s-subnet-zone1", var.vpc_name)
-  resource_group  = data.ibm_resource_group.this.id
+  resource_group  = data.ibm_resource_group.demo.id
   vpc  = ibm_is_vpc.vpc.id
   zone = format("%s-1", var.region) # jp-tok-1
 }
@@ -41,15 +41,16 @@ resource "ibm_is_subnet" "zone1" {
 /******************************************
  Public gateway
  *****************************************/
- resource "ibm_is_public_gateway" "pgw" {
-  name = "iac-public-gateway"
+ resource "ibm_is_public_gateway" "pgw_vpc_zone1" {
+  name = "public-gateway-zone1"  ##############################
   vpc  = ibm_is_vpc.vpc.id
   zone = format("%s-1", var.region) # jp-tok-1
+  resource_group = data.ibm_resource_group.demo.id
 }
 
 resource "ibm_is_subnet_public_gateway_attachment" "pgw_attach" {
-  subnet                = ibm_is_subnet.zone1.id
-  public_gateway         = ibm_is_public_gateway.pgw.id
+  subnet                = ibm_is_subnet.subnet_zone1.id
+  public_gateway         = ibm_is_public_gateway.pgw_vpc_zone1.id
 }
 
 /******************************************
@@ -62,18 +63,20 @@ data "ibm_is_image" "os" {
 /******************************************
  ssh
  *****************************************/
-data "ibm_is_ssh_key" "takamura-key" {
-  name = var.ssh_name
-}
+# data "ibm_is_ssh_keys" "ssh_keys" {
+# }
 
+data "ibm_is_ssh_key" "takamura_key" {
+  name = var.ssh_key_name
+}
 
 /******************************************
  user data
  *****************************************/
-data "template_file" "install" {
+data "template_file" "lamp_install" {
   template = "${file("install.yaml")}"
   vars = {
-    logdna_ingestion_key = ibm_resource_key.log_resource_key.credentials["ingestion_key"]
+    logdna_ingestion_key = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"]
     monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
   }
 }
@@ -81,25 +84,26 @@ data "template_file" "install" {
 /******************************************
  Security group
  *****************************************/
-resource "ibm_is_security_group" "iac-sg" {
-  name = "security-group-iac"
+resource "ibm_is_security_group" "lamp_sg" {
+  name = "security-group-iac"              ###################
   vpc  = ibm_is_vpc.vpc.id
+  resource_group = data.ibm_resource_group.demo.id
 }
 
-resource "ibm_is_security_group_rule" "icmp" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "icmp_all" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   icmp {
   }
 }
 
-resource "ibm_is_security_group_rule" "outpound" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "outpound_all" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "outbound"
 }
 
-resource "ibm_is_security_group_rule" "ssh" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "ssh_from_home" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   remote    = "219.110.209.185"
   tcp {
@@ -108,8 +112,8 @@ resource "ibm_is_security_group_rule" "ssh" {
   }
 }
 
-resource "ibm_is_security_group_rule" "ssh2" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "ssh_from_satellite" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   remote    = "129.41.57.0/29"
   tcp {
@@ -118,8 +122,8 @@ resource "ibm_is_security_group_rule" "ssh2" {
   }
 }
 
-resource "ibm_is_security_group_rule" "https" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "https_from_all" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   tcp {
     port_min = 80
@@ -127,8 +131,8 @@ resource "ibm_is_security_group_rule" "https" {
   }
 }
 
-resource "ibm_is_security_group_rule" "monitoring" {
-  group     = ibm_is_security_group.iac-sg.id
+resource "ibm_is_security_group_rule" "allow_monitoring" {
+  group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   tcp {
     port_min = 6443
@@ -139,73 +143,68 @@ resource "ibm_is_security_group_rule" "monitoring" {
  VSI
  *****************************************/
 
-resource "ibm_is_instance" "virtual_instance" {
-  name    = "iac-instance"
+resource "ibm_is_instance" "lamp_server" {
+  name    = "iac-instance"                   ################
   vpc     = ibm_is_vpc.vpc.id
   zone    = format("%s-1", var.region)
-  keys    = [data.ibm_is_ssh_key.takamura-key.id]
+  keys    = [data.ibm_is_ssh_key.takamura_key.id]
   image   = data.ibm_is_image.os.id
   profile = "bx2-2x8"
   metadata_service_enabled  = false
-  user_data = "${data.template_file.install.rendered}"
-  resource_group = data.ibm_resource_group.this.id
+  user_data = "${data.template_file.lamp_install.rendered}"
+  resource_group = data.ibm_resource_group.demo.id
 
 
   primary_network_interface {
-    subnet = ibm_is_subnet.zone1.id
+    subnet = ibm_is_subnet.subnet_zone1.id
     # primary_ipv4_address = "10.0.1.4" 
-    security_groups = [ibm_is_security_group.iac-sg.id]
+    security_groups = [ibm_is_security_group.lamp_sg.id]
     allow_ip_spoofing = false
   }
 }
 
-resource "ibm_is_floating_ip" "iac-fip" {
-  name   = "iac-floating-ip"
-  target = ibm_is_instance.virtual_instance.primary_network_interface[0].id
+resource "ibm_is_floating_ip" "lamp_server_fip" {
+  name   = "lamp-server-fip"
+  target = ibm_is_instance.lamp_server.primary_network_interface[0].id
+  resource_group = data.ibm_resource_group.demo.id
 }
-
-/* primary_ipv4_address deprecation
-output "primary_ipv4_address" {
-  value = ibm_is_instance.iac_instance.primary_network_interface.0.primary_ip.0.address // use this instead
-}
-*/
 
 /******************************************
  Log analysis
  *****************************************/
 locals {
-  log_instance_name = "${var.log_name}-${var.log_location}"
+  logdna_name = "${var.logdna_name}-${var.logdna_location}"
 }
 
-resource "ibm_resource_instance" "log_instance" {
-  name = local.log_instance_name
-  service = var.log_service_type
-  plan = var.log_plan
-  location = var.log_location
-  resource_group_id = data.ibm_resource_group.this.id
+resource "ibm_resource_instance" "logdna" {
+  name = local.logdna_name
+  service = var.logdna_service_type
+  plan = var.logdna_plan
+  location = var.logdna_location
+  resource_group_id = data.ibm_resource_group.demo.id
   tags = ["logging", "public"]
   parameters = {
-    default_receiver= var.log_default_receiver
+    default_receiver= var.logdna_default_receiver
   }
 }
 
   // Create the resource key that is associated with the {{site.data.keyword.la_short}} instance
 
-resource "ibm_resource_key" "log_resource_key" {
-  name = var.log_key_name
+resource "ibm_resource_key" "logdna_resource_key" {
+  name = var.logdna_key_name
   role = "Manager"
-  resource_instance_id = ibm_resource_instance.log_instance.id
+  resource_instance_id = ibm_resource_instance.logdna.id
 }
 
   // Add a user policy for using the resource instance
 
-resource "ibm_iam_user_policy" "log_policy" {
+resource "ibm_iam_user_policy" "logdna_policy" {
   ibm_id = "soh.takamura@ibm.com"
   roles  = ["Manager", "Viewer"]
 
   resources {
     service              = "logdna"
-    resource_instance_id = element(split(":", ibm_resource_instance.log_instance.id), 7)
+    resource_instance_id = element(split(":", ibm_resource_instance.logdna.id), 7)
   }
 }
 
@@ -222,7 +221,7 @@ resource "ibm_resource_instance" "monitoring_instance" {
   service = var.monitoring_service_type
   plan = var.monitoring_plan
   location = var.monitoring_location
-  resource_group_id = data.ibm_resource_group.this.id
+  resource_group_id = data.ibm_resource_group.demo.id
   tags = ["monitoring", "public"]
   parameters = {
   default_receiver= var.monitoring_default_receiver
