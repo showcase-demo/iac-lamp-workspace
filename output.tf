@@ -9,3 +9,17 @@ output "resource_group_name" {
 output "vpc_id" {
   value = ibm_is_vpc.vpc.id
 }
+
+output "logdna_ingestion_key" {
+  value = ibm_resource_key.log_resource_key.credentials["ingestion_key"]
+  sensitive = true
+}
+
+output "monitoring_access_key" {
+  value = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
+  sensitive = true
+}
+
+output "user_data" {
+  value = "${data.template_file.install.rendered}"
+}

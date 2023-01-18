@@ -15,7 +15,7 @@ variable "region" {
  Resource Group, Tags
  *****************************************/
 variable "resource_group_name" {
-  default     = "Default"
+  default     = "demo-common"
   description = "リソースグループ名"
 }
 
@@ -25,7 +25,11 @@ variable "tags" {
   description = "タグ名"
 }
 
-
+variable "ssh_name" {
+  type        = string
+  default     = "takamura-key"
+  description = "sshキー名"
+}
 /******************************************
  VPC
  *****************************************/
@@ -42,7 +46,7 @@ variable "vpc_name" {
 # image names can be determined with the cli command `ibmcloud is images`
 variable "image_name" {
   description = "OS image for VSI deployments. Only tested with Centos"
-  default     = "ibm-redhat-9-0-minimal-amd64-1"
+  default     = "ibm-centos-7-9-minimal-amd64-8"
 }
 
 
@@ -52,7 +56,7 @@ variable "image_name" {
 variable "log_name" {
   description = "name of log instance"
   type = string
-  default = "iac-log_analysis"
+  default = "iac-log-analysis"
 }
 
 variable "log_service_type" {
@@ -116,7 +120,7 @@ variable "monitoring_location" {
 variable "monitoring_name" {
   description = "Name of the resource instance"
   type = string
-  default = "iac-monitoring-instance"
+  default = "iac-monitoring"
 }
 
 variable "monitoring_key_name" {

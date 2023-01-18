@@ -17,7 +17,7 @@ runcmd:
   - sudo rpm --import https://repo.logdna.com/logdna.gpg
   - echo -e "[logdna]\nname=LogDNA packages\nbaseurl=https://repo.logdna.com/el6/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo.logdna.com/logdna.gpg" | sudo tee /etc/yum.repos.d/logdna.repo
   - sudo yum -y install logdna-agent
-  - logdna-agent -k ${logdna_ingestion_key}
+  - logdna-agent -k a1ec4fe4760f1d1bd60d524fe48021fe
   - systemctl start logdna-agent
   - systemctl enable logdna-agent
-  - curl -sL https://ibm.biz/install-sysdig-agent | sudo bash -s -- -a ${monitoring_access_key} -c ingest.jp-tok.monitoring.cloud.ibm.com --collector_port 6443 --secure true -ac "sysdig_capture_enabled":" false"
+  - curl -sL https://ibm.biz/install-sysdig-agent | sudo bash -s -- -a 03a3197c-8760-45f9-91c5-923a780718a9 -c ingest.jp-tok.monitoring.cloud.ibm.com --collector_port 6443 --secure true -ac "sysdig_capture_enabled":" false"
