@@ -82,7 +82,7 @@ data "template_file" "lamp_install" {
  Security group
  *****************************************/
 resource "ibm_is_security_group" "lamp_sg" {
-  name = "security-group-iac"              ###################
+  name = var.lamp_sg_name 
   vpc  = ibm_is_vpc.vpc.id
   resource_group = data.ibm_resource_group.demo.id
 }
@@ -141,7 +141,7 @@ resource "ibm_is_security_group_rule" "allow_monitoring" {
  *****************************************/
 
 resource "ibm_is_instance" "lamp_server" {
-  name    = "iac-instance"                   ################
+  name    = var.instance_name
   vpc     = ibm_is_vpc.vpc.id
   zone    = format("%s-1", var.region)
   keys    = [data.ibm_is_ssh_key.takamura_key.id]
@@ -154,7 +154,6 @@ resource "ibm_is_instance" "lamp_server" {
 
   primary_network_interface {
     subnet = ibm_is_subnet.subnet_zone1.id
-    # primary_ipv4_address = "10.0.1.4" 
     security_groups = [ibm_is_security_group.lamp_sg.id]
     allow_ip_spoofing = false
   }

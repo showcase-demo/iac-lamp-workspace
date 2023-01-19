@@ -20,6 +20,13 @@ variable "resource_group_name" {
 }
 
 /******************************************
+ Security Group
+ *****************************************/
+variable "lamp_sg_name" {
+  default     = "demo"
+  description = "セキュリティ・グループ名"
+
+/******************************************
  VPC
  *****************************************/
 variable "vpc_name" {
@@ -52,9 +59,13 @@ variable "ssh_key_name" {
  VSI
  *****************************************/
 # image names can be determined with the cli command `ibmcloud is images`
+variable "instance_name" {
+  default = "lamp-server"
+  description = "インスタンス名"
+}
 variable "image_name" {
-  description = "OSイメージ名"
   default     = "ibm-centos-7-9-minimal-amd64-8"
+  description = "OSイメージ名"
 }
 
 
