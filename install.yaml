@@ -14,6 +14,8 @@ runcmd:
   - systemctl enable httpd.service
   - systemctl start mariadb
   - systemctl enable mariadb.service
+  - git clone https":"//github.com/takasou777/php-test.git
+  - cp /root/php-test/info.php /var/www/html
   - sudo rpm --import https://repo.logdna.com/logdna.gpg
   - echo -e "[logdna]\nname=LogDNA packages\nbaseurl=https://repo.logdna.com/el6/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo.logdna.com/logdna.gpg" | sudo tee /etc/yum.repos.d/logdna.repo
   - sudo yum -y install logdna-agent

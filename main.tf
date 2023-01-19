@@ -5,7 +5,6 @@ data "ibm_resource_group" "demo" {
   name = var.resource_group_name
 }
 
-
 /******************************************
  VPC
  *****************************************/
@@ -14,7 +13,6 @@ resource "ibm_is_vpc" "vpc" {
   resource_group = data.ibm_resource_group.demo.id
   tags           = var.tags
 }
-
 
 /******************************************
  Subnet
@@ -36,7 +34,6 @@ resource "ibm_is_subnet" "subnet_zone1" {
   vpc  = ibm_is_vpc.vpc.id
   zone = format("%s-1", var.region) # jp-tok-1
 }
-
 
 /******************************************
  Public gateway
@@ -180,7 +177,8 @@ resource "ibm_resource_instance" "logdna" {
   name = local.logdna_name
   service = var.logdna_service_type
   plan = var.logdna_plan
-  location = var.logdna_location
+  # location = var.logdna_location
+  location = var.region
   resource_group_id = data.ibm_resource_group.demo.id
   tags = ["logging", "public"]
   parameters = {
@@ -220,7 +218,8 @@ resource "ibm_resource_instance" "monitoring_instance" {
   name = local.monitoring_instance_name
   service = var.monitoring_service_type
   plan = var.monitoring_plan
-  location = var.monitoring_location
+  # location = var.monitoring_location
+  location = var.region
   resource_group_id = data.ibm_resource_group.demo.id
   tags = ["monitoring", "public"]
   parameters = {

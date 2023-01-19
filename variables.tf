@@ -12,13 +12,25 @@ variable "region" {
 }
 
 /******************************************
- Resource Group, Tags
+ Resource Group
  *****************************************/
 variable "resource_group_name" {
   default     = "demo-common"
   description = "リソースグループ名"
 }
 
+/******************************************
+ VPC
+ *****************************************/
+variable "vpc_name" {
+  type        = string
+  default     = "iac-vpc"
+  description = "VPC名"
+}
+
+/******************************************
+ Tag, ssh
+ *****************************************/
 variable "tags" {
   type        = list(string)
   default     = ["terraform"]
@@ -36,16 +48,6 @@ variable "ssh_key_name" {
   default = "takamura-key"
   description = "sshキー名"
 }
-/******************************************
- VPC
- *****************************************/
-variable "vpc_name" {
-  type        = string
-  default     = "iac-vpc"
-  description = "VPC名"
-}
-
-
 /******************************************
  VSI
  *****************************************/
@@ -83,11 +85,11 @@ variable "logdna_default_receiver" {
   description = "プラットフォーム・メトリックの有効化"
 }
 
-variable "logdna_location" {
-  type = string
-  default = "jp-tok"
-  description = "Log Analysisのロケーション"
-}
+#variable "logdna_location" {
+#  type = string
+#  default = "jp-tok"
+#  description = "Log Analysisのロケーション"
+#}
 
 variable "logdna_key_name" {
   type = string
@@ -123,11 +125,11 @@ variable "monitoring_default_receiver" {
   description = "プラットフォーム・メトリックの有効化"
 }
 
-variable "monitoring_location" {
-  type = string
-  default = "jp-tok"
-  description = "Cloud Monitoringのロケーション"
-}
+#variable "monitoring_location" {
+#  type = string
+#  default = "jp-tok"
+#  description = "Cloud Monitoringのロケーション"
+#}
 
 variable "monitoring_key_name" {
   type = string

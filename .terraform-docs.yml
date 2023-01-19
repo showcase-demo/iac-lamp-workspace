@@ -1,0 +1,22 @@
+formatter: markdown table
+
+sections:
+  show:
+    - header
+    - requirements
+    - providers
+    - modules
+    - resources
+    - inputs
+    - outputs
+sort:
+  enabled: false
+
+settings:
+  indent: 2
+  html: false # use HTML tags in genereted output (default true)
+  anchor: false # create anchor links (default true)
+  escape: true # escape special characters (default true)
+  default: true # show Default column or section (default true)
+  required: true # show Required column or section (default true)
+  type: true # show Type column or section (default true)
