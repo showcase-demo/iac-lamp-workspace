@@ -19,7 +19,7 @@ variable "resource_group_name" {
  Security Group
  *****************************************/
 variable "lamp_sg_name" {
-  default     = "lamp_sg"
+  default     = "lamp-sg"
   description = "セキュリティ・グループ名"
 }
 
