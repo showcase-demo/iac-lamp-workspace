@@ -11,15 +11,15 @@ output "vpc_id" {
 }
 
 output "logdna_ingestion_key" {
-  value = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"]
+  value     = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"]
   sensitive = true
 }
 
 output "monitoring_access_key" {
-  value = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
+  value     = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
   sensitive = true
 }
 
 output "user_data" {
-  value = "${data.template_file.lamp_install.rendered}"
+  value = data.template_file.lamp_install.rendered
 }

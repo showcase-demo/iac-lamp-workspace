@@ -1,10 +1,6 @@
 /******************************************
  Provider
  *****************************************/
-# variable "ibmcloud_api_key" {
-#   sensitive = true
-# }
-
 variable "region" {
   type        = string
   default     = "jp-tok"
@@ -25,6 +21,7 @@ variable "resource_group_name" {
 variable "lamp_sg_name" {
   default     = "demo"
   description = "セキュリティ・グループ名"
+}
 
 /******************************************
  VPC
@@ -51,8 +48,8 @@ variable "tags" {
 #}
 
 variable "ssh_key_name" {
-  type    = string
-  default = "takamura-key"
+  type        = string
+  default     = "takamura-key"
   description = "sshキー名"
 }
 /******************************************
@@ -60,7 +57,7 @@ variable "ssh_key_name" {
  *****************************************/
 # image names can be determined with the cli command `ibmcloud is images`
 variable "instance_name" {
-  default = "lamp-server"
+  default     = "lamp-server"
   description = "インスタンス名"
 }
 variable "image_name" {
@@ -73,26 +70,26 @@ variable "image_name" {
  Log Analysis
  *****************************************/
 variable "logdna_name" {
-  type = string
-  default = "iac-log-analysis"
+  type        = string
+  default     = "iac-log-analysis"
   description = "Log Analysisのインスタンス名"
 }
 
 variable "logdna_service_type" {
-  type = string
-  default = "logdna"
+  type        = string
+  default     = "logdna"
   description = "サービスタイプ (Log Analysis)"
 }
 
 variable "logdna_plan" {
-  type = string
-  default = "7-day"
+  type        = string
+  default     = "7-day"
   description = "Log Analysisのサービスプラン"
 }
 
 variable "logdna_default_receiver" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "プラットフォーム・メトリックの有効化"
 }
 
@@ -103,8 +100,8 @@ variable "logdna_default_receiver" {
 #}
 
 variable "logdna_key_name" {
-  type = string
-  default = "iac-logging-tf-instance-key"
+  type        = string
+  default     = "iac-logging-tf-instance-key"
   description = "Log Analysisのサービスキー名"
 }
 
@@ -113,26 +110,26 @@ variable "logdna_key_name" {
  IBM Monitoring
  *****************************************/
 variable "monitoring_service_type" {
-  type = string
-  default = "sysdig-monitor"
+  type        = string
+  default     = "sysdig-monitor"
   description = "サービスタイプ (Cloud Monitoring)"
 }
 
 variable "monitoring_name" {
-  type = string
-  default = "iac-monitoring"
+  type        = string
+  default     = "iac-monitoring"
   description = "Cloud Monitoringのインスタンス名"
 }
 
 variable "monitoring_plan" {
-  type = string
-  default = "graduated-tier"
+  type        = string
+  default     = "graduated-tier"
   description = "Cloud Monitoringのサービスプラン"
 }
 
 variable "monitoring_default_receiver" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "プラットフォーム・メトリックの有効化"
 }
 
@@ -143,8 +140,8 @@ variable "monitoring_default_receiver" {
 #}
 
 variable "monitoring_key_name" {
-  type = string
-  default = "iac-monitoring-tf-instance-key"
+  type        = string
+  default     = "iac-monitoring-tf-instance-key"
   description = "Cloud Monitoringのサービスキー名"
 }
 
