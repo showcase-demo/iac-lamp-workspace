@@ -170,7 +170,7 @@ resource "ibm_is_floating_ip" "lamp_server_fip" {
  Log analysis
  *****************************************/
 locals {
-  logdna_name = "${var.logdna_name}-${var.logdna_location}"
+  logdna_name = "${var.logdna_name}-${var.region}"
 }
 
 resource "ibm_resource_instance" "logdna" {
@@ -211,7 +211,7 @@ resource "ibm_iam_user_policy" "logdna_policy" {
  IBM Monitoring
  *****************************************/
 locals {
-  monitoring_instance_name = "${var.monitoring_name}-${var.monitoring_location}"
+  monitoring_instance_name = "${var.monitoring_name}-${var.region}"
 }
 
 resource "ibm_resource_instance" "monitoring_instance" {
