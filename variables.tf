@@ -11,7 +11,7 @@ variable "region" {
  Resource Group
  *****************************************/
 variable "resource_group_name" {
-  default     = "demo-common"
+  default     = "Default"
   description = "リソースグループ名"
 }
 
