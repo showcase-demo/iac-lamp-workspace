@@ -99,18 +99,8 @@ resource "ibm_is_security_group_rule" "outpound_all" {
   direction = "outbound"
 }
 
-resource "ibm_is_security_group_rule" "ssh_from_home" {
-  group     = ibm_is_security_group.lamp_sg.id
-  direction = "inbound"
-  remote    = "219.110.209.185"
-  tcp {
-    port_min = 22
-    port_max = 22
-  }
-}
-
 resource "ibm_is_security_group_rule" "ssh_from_satellite" {
-  group     = ibm_is_security_group.lamp_sg.id
+  group       = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
   remote    = "129.41.57.0/29"
   tcp {
