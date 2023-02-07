@@ -91,7 +91,7 @@ resource "ibm_is_security_group_rule" "outpound_all" {
 resource "ibm_is_security_group_rule" "ssh_from_satellite" {
   group     = ibm_is_security_group.lamp_sg.id
   direction = "inbound"
-  remote    = "129.41.57.0/29"
+  remote    = var.allow_ips
   tcp {
     port_min = 22
     port_max = 22

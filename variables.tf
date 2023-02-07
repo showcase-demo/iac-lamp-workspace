@@ -23,6 +23,10 @@ variable "security_group_name" {
   description = "セキュリティ・グループ名"
 }
 
+variable "allow_ips" {
+  default     = "10.1.1.0/24"
+  description = "ログイン端末IPアドレス"
+}
 /******************************************
  VPC
  *****************************************/
