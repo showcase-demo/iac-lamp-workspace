@@ -18,7 +18,7 @@ variable "resource_group_name" {
 /******************************************
  Security Group
  *****************************************/
-variable "lamp_sg_name" {
+variable "security_group_name" {
   default     = "lamp-sg"
   description = "セキュリティ・グループ名"
 }
@@ -28,7 +28,7 @@ variable "lamp_sg_name" {
  *****************************************/
 variable "vpc_name" {
   type        = string
-  default     = "iac-vpc"
+  default     = "dev-vpc"
   description = "VPC名"
 }
 
@@ -71,7 +71,7 @@ variable "image_name" {
  *****************************************/
 variable "logdna_name" {
   type        = string
-  default     = "iac-log-analysis"
+  default     = "dev-log-analysis"
   description = "Log Analysisのインスタンス名"
 }
 
@@ -101,7 +101,7 @@ variable "logdna_default_receiver" {
 
 variable "logdna_key_name" {
   type        = string
-  default     = "iac-logging-tf-instance-key"
+  default     = "dev-logging-tf-instance-key"
   description = "Log Analysisのサービスキー名"
 }
 
@@ -117,7 +117,7 @@ variable "monitoring_service_type" {
 
 variable "monitoring_name" {
   type        = string
-  default     = "iac-monitoring"
+  default     = "dev-monitoring"
   description = "Cloud Monitoringのインスタンス名"
 }
 
@@ -141,7 +141,7 @@ variable "monitoring_default_receiver" {
 
 variable "monitoring_key_name" {
   type        = string
-  default     = "iac-monitoring-tf-instance-key"
+  default     = "dev-monitoring-tf-instance-key"
   description = "Cloud Monitoringのサービスキー名"
 }
 

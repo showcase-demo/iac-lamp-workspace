@@ -82,7 +82,7 @@ data "template_file" "lamp_install" {
  Security group
  *****************************************/
 resource "ibm_is_security_group" "lamp_sg" {
-  name           = var.lamp_sg_name
+  name           = var.security_group_name
   vpc            = ibm_is_vpc.vpc.id
   resource_group = data.ibm_resource_group.demo.id
 }
