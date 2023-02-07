@@ -19,7 +19,3 @@ output "monitoring_access_key" {
   value     = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
   sensitive = true
 }
-
-output "user_data" {
-  value = data.template_file.lamp_install.rendered
-}

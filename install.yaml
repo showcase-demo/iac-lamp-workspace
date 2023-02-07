@@ -14,7 +14,7 @@ runcmd:
   - systemctl start mariadb
   - systemctl enable mariadb.service
   - mkdir /temp
-  - git clone "https://github.com/takasou777/php-test.git" /temp/php-test
+  - git clone ${webapp_git_url} /temp/php-test
   - cp /temp/php-test/* /var/www/html
   - chmod 744 /var/www/html/*
   - sudo rpm --import https://repo.logdna.com/logdna.gpg

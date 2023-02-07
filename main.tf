@@ -1,7 +1,7 @@
 /******************************************
  Resource Group
  *****************************************/
-data "ibm_resource_group" "demo" {
+data "ibm_resource_group" "default" {
   name = var.resource_group_name
 }
 
@@ -10,7 +10,7 @@ data "ibm_resource_group" "demo" {
  *****************************************/
 resource "ibm_is_vpc" "vpc" {
   name           = var.vpc_name
-  resource_group = data.ibm_resource_group.demo.id
+  resource_group = data.ibm_resource_group.default.id
   tags           = var.tags
 }
 
@@ -30,7 +30,7 @@ resource "ibm_is_subnet" "subnet_zone1" {
   ]
   ipv4_cidr_block = "10.0.1.0/24"
   name            = format("%s-subnet-zone1", var.vpc_name)
-  resource_group  = data.ibm_resource_group.demo.id
+  resource_group  = data.ibm_resource_group.default.id
   vpc             = ibm_is_vpc.vpc.id
   zone            = format("%s-1", var.region) # jp-tok-1
 }
@@ -42,7 +42,7 @@ resource "ibm_is_public_gateway" "pgw_vpc_zone1" {
   name           = "public-gateway-zone1" ##############################
   vpc            = ibm_is_vpc.vpc.id
   zone           = format("%s-1", var.region) # jp-tok-1
-  resource_group = data.ibm_resource_group.demo.id
+  resource_group = data.ibm_resource_group.default.id
 }
 
 resource "ibm_is_subnet_public_gateway_attachment" "pgw_attach" {
@@ -68,23 +68,12 @@ data "ibm_is_ssh_key" "takamura_key" {
 }
 
 /******************************************
- user data
- *****************************************/
-data "template_file" "lamp_install" {
-  template = file("install.yaml")
-  vars = {
-    logdna_ingestion_key  = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"]
-    monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
-  }
-}
-
-/******************************************
  Security group
  *****************************************/
 resource "ibm_is_security_group" "lamp_sg" {
   name           = var.security_group_name
   vpc            = ibm_is_vpc.vpc.id
-  resource_group = data.ibm_resource_group.demo.id
+  resource_group = data.ibm_resource_group.default.id
 }
 
 resource "ibm_is_security_group_rule" "icmp_all" {
@@ -136,10 +125,10 @@ resource "ibm_is_instance" "lamp_server" {
   zone                     = format("%s-1", var.region)
   keys                     = [data.ibm_is_ssh_key.takamura_key.id]
   image                    = data.ibm_is_image.os.id
-  profile                  = "bx2-2x8"
+  profile                  = var.profile
   metadata_service_enabled = false
-  user_data                = data.template_file.lamp_install.rendered
-  resource_group           = data.ibm_resource_group.demo.id
+  user_data                = templatefile("${path.module}/install.yaml", {webapp_git_url = var.webapp_git_url,logdna_ingestion_key  = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"], monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]})
+  resource_group           = data.ibm_resource_group.default.id
 
 
   primary_network_interface {
@@ -152,23 +141,19 @@ resource "ibm_is_instance" "lamp_server" {
 resource "ibm_is_floating_ip" "lamp_server_fip" {
   name           = "lamp-server-fip"
   target         = ibm_is_instance.lamp_server.primary_network_interface[0].id
-  resource_group = data.ibm_resource_group.demo.id
+  resource_group = data.ibm_resource_group.default.id
 }
 
 /******************************************
  Log analysis
  *****************************************/
-locals {
-  logdna_name = "${var.logdna_name}-${var.region}"
-}
-
 resource "ibm_resource_instance" "logdna" {
-  name    = local.logdna_name
+  name    = var.logdna_instance_name
   service = var.logdna_service_type
   plan    = var.logdna_plan
   # location = var.logdna_location
   location          = var.region
-  resource_group_id = data.ibm_resource_group.demo.id
+  resource_group_id = data.ibm_resource_group.default.id
   tags              = ["logging", "public"]
   parameters = {
     default_receiver = var.logdna_default_receiver
@@ -176,61 +161,30 @@ resource "ibm_resource_instance" "logdna" {
 }
 
 // Create the resource key that is associated with the {{site.data.keyword.la_short}} instance
-
 resource "ibm_resource_key" "logdna_resource_key" {
   name                 = var.logdna_key_name
   role                 = "Manager"
   resource_instance_id = ibm_resource_instance.logdna.id
 }
 
-// Add a user policy for using the resource instance
-
-resource "ibm_iam_user_policy" "logdna_policy" {
-  ibm_id = "soh.takamura@ibm.com"
-  roles  = ["Manager", "Viewer"]
-
-  resources {
-    service              = "logdna"
-    resource_instance_id = element(split(":", ibm_resource_instance.logdna.id), 7)
-  }
-}
-
 
 /******************************************
  IBM Monitoring
  *****************************************/
-locals {
-  monitoring_instance_name = "${var.monitoring_name}-${var.region}"
-}
-
 resource "ibm_resource_instance" "monitoring_instance" {
-  name    = local.monitoring_instance_name
+  name    = var.monitoring_instance_name
   service = var.monitoring_service_type
   plan    = var.monitoring_plan
-  # location = var.monitoring_location
   location          = var.region
-  resource_group_id = data.ibm_resource_group.demo.id
+  resource_group_id = data.ibm_resource_group.default.id
   tags              = ["monitoring", "public"]
   parameters = {
     default_receiver = var.monitoring_default_receiver
   }
 }
 
-
 resource "ibm_resource_key" "monitoring_resource_key" {
   name                 = var.monitoring_key_name
   role                 = "Manager"
   resource_instance_id = ibm_resource_instance.monitoring_instance.id
-}
-
-// Add a user policy for using the resource instance
-
-resource "ibm_iam_user_policy" "monitoring_policy" {
-  ibm_id = "soh.takamura@ibm.com"
-  roles  = ["Manager", "Viewer"]
-
-  resources {
-    service              = "sysdig-monitor"
-    resource_instance_id = element(split(":", ibm_resource_instance.monitoring_instance.id), 7)
-  }
 }

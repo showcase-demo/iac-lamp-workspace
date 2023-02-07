@@ -65,13 +65,22 @@ variable "image_name" {
   description = "OSイメージ名"
 }
 
+variable "profile" {
+  default     = "bx2-2x8"
+  description = "profile名"
+}
+
+variable "webapp_git_url" {
+  default     = "https://github.com/showcase-demo/iac-lamp-app.git"
+  description = "webアプリのURL"
+}
 
 /******************************************
  Log Analysis
  *****************************************/
-variable "logdna_name" {
+variable "logdna_instance_name" {
   type        = string
-  default     = "dev-log-analysis"
+  default     = "dev-log-analysis-jp-tok"
   description = "Log Analysisのインスタンス名"
 }
 
@@ -93,32 +102,25 @@ variable "logdna_default_receiver" {
   description = "プラットフォーム・メトリックの有効化"
 }
 
-#variable "logdna_location" {
-#  type = string
-#  default = "jp-tok"
-#  description = "Log Analysisのロケーション"
-#}
-
 variable "logdna_key_name" {
   type        = string
   default     = "dev-logging-tf-instance-key"
   description = "Log Analysisのサービスキー名"
 }
 
-
 /******************************************
  IBM Monitoring
  *****************************************/
+variable "monitoring_instance_name" {
+  type        = string
+  default     = "dev-monitoring-jp-tok"
+  description = "Cloud Monitoringのインスタンス名"
+}
+
 variable "monitoring_service_type" {
   type        = string
   default     = "sysdig-monitor"
   description = "サービスタイプ (Cloud Monitoring)"
-}
-
-variable "monitoring_name" {
-  type        = string
-  default     = "dev-monitoring"
-  description = "Cloud Monitoringのインスタンス名"
 }
 
 variable "monitoring_plan" {
@@ -133,15 +135,8 @@ variable "monitoring_default_receiver" {
   description = "プラットフォーム・メトリックの有効化"
 }
 
-#variable "monitoring_location" {
-#  type = string
-#  default = "jp-tok"
-#  description = "Cloud Monitoringのロケーション"
-#}
-
 variable "monitoring_key_name" {
   type        = string
   default     = "dev-monitoring-tf-instance-key"
   description = "Cloud Monitoringのサービスキー名"
 }
-
