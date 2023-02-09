@@ -111,7 +111,13 @@ resource "ibm_is_security_group_rule" "https_from_all" {
  *****************************************/
 
 locals {
-  provisioning_scropt = templatefile("${path.module}/install.yaml", { webapp_git_url = var.webapp_git_url, logdna_ingestion_key = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"], monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"] })
+  provisioning_scropt = templatefile("${path.module}/install.yaml", { 
+    region = var.region, 
+    webapp_git_url = var.webapp_git_url, 
+    logdna_ingestion_key = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"],
+    monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"] 
+    }
+  )
 }
 
 resource "ibm_is_instance" "lamp_server" {

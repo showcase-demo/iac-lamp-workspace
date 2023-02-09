@@ -23,4 +23,4 @@ runcmd:
   - logdna-agent -k ${logdna_ingestion_key}
   - systemctl start logdna-agent
   - systemctl enable logdna-agent
-  - curl -sL https://ibm.biz/install-sysdig-agent | sudo bash -s -- -a ${monitoring_access_key} -c ingest.jp-tok.monitoring.cloud.ibm.com --collector_port 6443 --secure true -ac "sysdig_capture_enabled":" false"
+  - curl -sL https://ibm.biz/install-sysdig-agent | sudo bash -s -- -a ${monitoring_access_key} -c ingest.${region}.monitoring.cloud.ibm.com --collector_port 6443 --secure true -ac "sysdig_capture_enabled":" false"
