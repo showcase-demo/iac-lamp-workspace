@@ -3,7 +3,7 @@
  *****************************************/
 variable "region" {
   type        = string
-  default     = "jp-tok"
+  default     = "jp-osa"
   description = "リージョン"
 }
 
@@ -81,7 +81,7 @@ variable "webapp_git_url" {
  *****************************************/
 variable "logdna_instance_name" {
   type        = string
-  default     = "dev-log-analysis-jp-tok"
+  default     = "dev-log-analysis"
   description = "Log Analysisのインスタンス名"
 }
 
@@ -96,7 +96,7 @@ variable "logdna_plan" {
  *****************************************/
 variable "monitoring_instance_name" {
   type        = string
-  default     = "dev-monitoring-jp-tok"
+  default     = "dev-monitoring"
   description = "Cloud Monitoringのインスタンス名"
 }
 
