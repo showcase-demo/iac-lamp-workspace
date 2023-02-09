@@ -10,6 +10,10 @@ output "vpc_id" {
   value = ibm_is_vpc.vpc.id
 }
 
+output "vsi_fip" {
+  value = ibm_is_floating_ip.lamp_server_fip.address
+}
+
 output "logdna_ingestion_key" {
   value     = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"]
   sensitive = true
