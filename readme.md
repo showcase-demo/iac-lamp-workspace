@@ -9,7 +9,7 @@
 
 | Name | Version |
 |------|---------|
-| ibm | 1.49.0 |
+| ibm | 1.50.0 |
 
 ## Modules
 
@@ -44,24 +44,18 @@ No modules.
 | region | リージョン | `string` | `"jp-tok"` | no |
 | resource\_group\_name | リソースグループ名 | `string` | `"Default"` | no |
 | security\_group\_name | セキュリティ・グループ名 | `string` | `"lamp-sg"` | no |
-| allow\_ips | ログイン端末IPアドレス | `string` | `"10.1.1.0/24"` | no |
+| allow\_ips | SSHログイン端末IPアドレス | `string` | `"10.0.1.0/24"` | no |
 | vpc\_name | VPC名 | `string` | `"dev-vpc"` | no |
 | tags | タグ名 | `list(string)` | ```[ "terraform" ]``` | no |
-| ssh\_key\_name | sshキー名 | `string` | `"takamura-key"` | no |
+| ssh\_key\_names | sshキー名のリスト | `list(string)` | ```[ "takamura-key", "satokota-key" ]``` | no |
 | instance\_name | インスタンス名 | `string` | `"lamp-server"` | no |
 | image\_name | OSイメージ名 | `string` | `"ibm-centos-7-9-minimal-amd64-8"` | no |
 | profile | profile名 | `string` | `"bx2-2x8"` | no |
 | webapp\_git\_url | webアプリのURL | `string` | `"https://github.com/showcase-demo/iac-lamp-app.git"` | no |
 | logdna\_instance\_name | Log Analysisのインスタンス名 | `string` | `"dev-log-analysis-jp-tok"` | no |
-| logdna\_service\_type | サービスタイプ (Log Analysis) | `string` | `"logdna"` | no |
 | logdna\_plan | Log Analysisのサービスプラン | `string` | `"7-day"` | no |
-| logdna\_default\_receiver | プラットフォーム・メトリックの有効化 | `bool` | `false` | no |
-| logdna\_key\_name | Log Analysisのサービスキー名 | `string` | `"dev-logging-tf-instance-key"` | no |
 | monitoring\_instance\_name | Cloud Monitoringのインスタンス名 | `string` | `"dev-monitoring-jp-tok"` | no |
-| monitoring\_service\_type | サービスタイプ (Cloud Monitoring) | `string` | `"sysdig-monitor"` | no |
 | monitoring\_plan | Cloud Monitoringのサービスプラン | `string` | `"graduated-tier"` | no |
-| monitoring\_default\_receiver | プラットフォーム・メトリックの有効化 | `bool` | `false` | no |
-| monitoring\_key\_name | Cloud Monitoringのサービスキー名 | `string` | `"dev-monitoring-tf-instance-key"` | no |
 
 ## Outputs
 

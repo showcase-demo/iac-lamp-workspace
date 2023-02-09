@@ -1,5 +1,20 @@
-ibmcloud_api_key    = "******************"
 region              = "jp-tok"
 resource_group_name = "Default"
-tags                = ["terraform"]
-vpc_name            = "helloworld-vpc"
+security_group_name = "lamp-sg"
+allow_ips           = "10.0.1.0/24"
+vpc_name            = "dev-vpc"
+tags = [
+  "terraform"
+]
+ssh_key_names = [
+  "takamura-key",
+  "satokota-key"
+]
+instance_name            = "lamp-server"
+image_name               = "ibm-centos-7-9-minimal-amd64-8"
+profile                  = "bx2-2x8"
+webapp_git_url           = "https://github.com/showcase-demo/iac-lamp-app.git"
+logdna_instance_name     = "dev-log-analysis-jp-tok"
+logdna_plan              = "7-day"
+monitoring_instance_name = "dev-monitoring-jp-tok"
+monitoring_plan          = "graduated-tier"

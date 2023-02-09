@@ -39,7 +39,7 @@ resource "ibm_is_subnet" "subnet_zone1" {
  Public gateway
  *****************************************/
 resource "ibm_is_public_gateway" "pgw_vpc_zone1" {
-  name           = "public-gateway-zone1" ##############################
+  name           = "public-gateway-zone1"
   vpc            = ibm_is_vpc.vpc.id
   zone           = format("%s-1", var.region) # jp-tok-1
   resource_group = data.ibm_resource_group.default.id
@@ -60,11 +60,10 @@ data "ibm_is_image" "os" {
 /******************************************
  ssh
  *****************************************/
-# data "ibm_is_ssh_keys" "ssh_keys" {
-# }
-
-data "ibm_is_ssh_key" "takamura_key" {
-  name = var.ssh_key_name
+# ssh-key
+data "ibm_is_ssh_key" "keys" {
+  count = length(var.ssh_key_names)
+  name  = var.ssh_key_names[count.index]
 }
 
 /******************************************
@@ -119,15 +118,19 @@ resource "ibm_is_security_group_rule" "allow_monitoring" {
  VSI
  *****************************************/
 
+locals {
+  provisioning_scropt = templatefile("${path.module}/install.yaml", { webapp_git_url = var.webapp_git_url, logdna_ingestion_key = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"], monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"] })
+}
+
 resource "ibm_is_instance" "lamp_server" {
   name                     = var.instance_name
   vpc                      = ibm_is_vpc.vpc.id
   zone                     = format("%s-1", var.region)
-  keys                     = [data.ibm_is_ssh_key.takamura_key.id]
+  keys                     = data.ibm_is_ssh_key.keys.*.id
   image                    = data.ibm_is_image.os.id
   profile                  = var.profile
   metadata_service_enabled = false
-  user_data                = templatefile("${path.module}/install.yaml", {webapp_git_url = var.webapp_git_url,logdna_ingestion_key  = ibm_resource_key.logdna_resource_key.credentials["ingestion_key"], monitoring_access_key = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]})
+  user_data                = local.provisioning_scropt
   resource_group           = data.ibm_resource_group.default.id
 
 
@@ -139,7 +142,7 @@ resource "ibm_is_instance" "lamp_server" {
 }
 
 resource "ibm_is_floating_ip" "lamp_server_fip" {
-  name           = "lamp-server-fip"
+  name           = format("%s-fip", var.instance_name)
   target         = ibm_is_instance.lamp_server.primary_network_interface[0].id
   resource_group = data.ibm_resource_group.default.id
 }
@@ -148,21 +151,19 @@ resource "ibm_is_floating_ip" "lamp_server_fip" {
  Log analysis
  *****************************************/
 resource "ibm_resource_instance" "logdna" {
-  name    = var.logdna_instance_name
-  service = var.logdna_service_type
-  plan    = var.logdna_plan
-  # location = var.logdna_location
+  name              = var.logdna_instance_name
+  service           = "logdna"
+  plan              = var.logdna_plan
   location          = var.region
   resource_group_id = data.ibm_resource_group.default.id
   tags              = ["logging", "public"]
   parameters = {
-    default_receiver = var.logdna_default_receiver
+    default_receiver = false
   }
 }
 
-// Create the resource key that is associated with the {{site.data.keyword.la_short}} instance
 resource "ibm_resource_key" "logdna_resource_key" {
-  name                 = var.logdna_key_name
+  name                 = format("%s-key", var.logdna_instance_name)
   role                 = "Manager"
   resource_instance_id = ibm_resource_instance.logdna.id
 }
@@ -172,19 +173,19 @@ resource "ibm_resource_key" "logdna_resource_key" {
  IBM Monitoring
  *****************************************/
 resource "ibm_resource_instance" "monitoring_instance" {
-  name    = var.monitoring_instance_name
-  service = var.monitoring_service_type
-  plan    = var.monitoring_plan
+  name              = var.monitoring_instance_name
+  service           = "sysdig-monitor"
+  plan              = var.monitoring_plan
   location          = var.region
   resource_group_id = data.ibm_resource_group.default.id
   tags              = ["monitoring", "public"]
   parameters = {
-    default_receiver = var.monitoring_default_receiver
+    default_receiver = "false"
   }
 }
 
 resource "ibm_resource_key" "monitoring_resource_key" {
-  name                 = var.monitoring_key_name
+  name                 = format("%s-key", var.monitoring_instance_name)
   role                 = "Manager"
   resource_instance_id = ibm_resource_instance.monitoring_instance.id
 }

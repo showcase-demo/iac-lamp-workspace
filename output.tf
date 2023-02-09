@@ -19,3 +19,7 @@ output "monitoring_access_key" {
   value     = ibm_resource_key.monitoring_resource_key.credentials["Sysdig Access Key"]
   sensitive = true
 }
+
+# output "provisioning_scropt" {
+#   value     = local.provisioning_scropt
+# }
