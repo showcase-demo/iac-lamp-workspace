@@ -42,7 +42,7 @@ variable "vpc_name" {
  *****************************************/
 variable "tags" {
   type        = list(string)
-  default     = ["terraform"]
+  default     = ["terraform", "showcase"]
   description = "タグ名"
 }
 

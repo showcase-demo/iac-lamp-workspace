@@ -106,14 +106,6 @@ resource "ibm_is_security_group_rule" "https_from_all" {
   }
 }
 
-resource "ibm_is_security_group_rule" "allow_monitoring" {
-  group     = ibm_is_security_group.lamp_sg.id
-  direction = "inbound"
-  tcp {
-    port_min = 6443
-    port_max = 6443
-  }
-}
 /******************************************
  VSI
  *****************************************/
@@ -156,7 +148,7 @@ resource "ibm_resource_instance" "logdna" {
   plan              = var.logdna_plan
   location          = var.region
   resource_group_id = data.ibm_resource_group.default.id
-  tags              = ["logging", "public"]
+  tags              = var.tags
   parameters = {
     default_receiver = false
   }
@@ -178,7 +170,7 @@ resource "ibm_resource_instance" "monitoring_instance" {
   plan              = var.monitoring_plan
   location          = var.region
   resource_group_id = data.ibm_resource_group.default.id
-  tags              = ["monitoring", "public"]
+  tags              = var.tags
   parameters = {
     default_receiver = "false"
   }
